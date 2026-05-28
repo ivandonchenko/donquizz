@@ -132,34 +132,40 @@ export default function Home() {
               {filteredQuizzes.length > 0 ? (
 
                 filteredQuizzes.slice(0, 5).map((q) => (
+                  <Link
+							        key={q.code}
+							        href={`/quiz/${q.code}`}
+							        className="block w-full"
+						      >
+                    <div className="flex text-left items-center justify-between rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition">
 
-                  <div className="flex text-left items-center justify-between rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition">
+                    
+								      <div className="px-4 py-2">
 
-								    <div className="px-4 py-2">
+									      <p className="text-sm font-semibold">
+										      {q.title}
+									      </p>
 
-									    <p className="text-sm font-semibold">
-										    {q.title}
+									      <p className="text-white/50 text-[10px] mt-1">
+										      {q.category} • {q.questions.length} питань • Код: {q.code}
+									      </p>
+
+								    </div>
+
+								    <div className="text-right px-4 py-2">
+
+									    <p className="text-4sm text-indigo-300">
+										    {q.difficulty}
 									    </p>
 
-									    <p className="text-white/50 text-[10px] mt-1">
-										    {q.category} • {q.questions.length} питань • Код: {q.code}
-									    </p>
-
-								  </div>
-
-								  <div className="text-right px-4 py-2">
-
-									  <p className="text-4sm text-indigo-300">
-										  {q.difficulty}
-									  </p>
-
-									{q.hasTime && (
-										<p className="text-4sm text-indigo-300">
-											⏱ {q.timePerQuestion}с
-										</p>
-									)}  
-								</div>
-							</div>
+									    {q.hasTime && (
+										    <p className="text-4sm text-indigo-300">
+											    ⏱ {q.timePerQuestion}с
+										    </p>
+									    )}  
+								    </div>              
+							    </div>
+                </Link>
 
                 ))
 
