@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -87,7 +86,7 @@ export default function Home() {
   return (
 
     
-    <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
+    <main className="min-h-screen w-6xl bg-black text-white relative overflow-hidden">
 
       {/* Background glow (как в квизе) */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
