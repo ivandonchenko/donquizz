@@ -173,23 +173,34 @@ if (!quiz) {
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
 
+      {/* HEADER */}
+        <header className="py-1 border-b border-white/10 text-center">
+          <h1 className="text-4xl font-bold">
+            DonQuizzz
+          </h1>
+
+          <p className="py-1 text-xs text-white/60 mt-1">
+            Інтерактивна платформа вікторин
+          </p>
+        </header>
+
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-8">
+      <div className="relative z-10 flex items-center justify-center px-8 pt-40">
 
-        <div className="w-full max-w-[1100px] bg-white/5 border border-white/10 rounded-3xl p-20 backdrop-blur-md text-center">
+        <div className="w-full max-w-[600px] bg-white/5 border border-white/10 rounded-xl p-15 backdrop-blur-md text-center">
 
-          <h1 className="text-8xl font-bold mb-8">
+          <h1 className="text-3xl font-bold mb-3">
             Квіз не знайдено 😢
           </h1>
 
-          <p className="text-3xl text-white/60 mb-14">
+          <p className="text-xl text-white/60 mb-10">
             Можливо, код неправильний або такого квізу не існує
           </p>
 
           <Link href="/">
-            <button className="px-16 py-6 rounded-2xl bg-white text-black text-3xl font-bold hover:opacity-80 transition">
+            <button className="px-7 py-3 rounded-xl bg-white text-black text-2xl font-bold hover:opacity-80 transition">
               На головну
             </button>
           </Link>
@@ -204,7 +215,7 @@ if (!quiz) {
 
 if (!question || !Array.isArray(question.answers)) {
   return (
-    <div className="text-white p-10">
+    <div className="text-white p-5">
       Loading quiz data...
     </div>
   );
@@ -214,64 +225,75 @@ if (!started) {
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
 
+      {/* HEADER */}
+        <header className="py-1 border-b border-white/10 text-center">
+          <h1 className="text-4xl font-bold">
+            DonQuizzz
+          </h1>
+
+          <p className="py-1 text-xs text-white/60 mt-1">
+            Інтерактивна платформа вікторин
+          </p>
+        </header>
+
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#4f46e5_0%,transparent_40%),radial-gradient(circle_at_bottom_right,#7c3aed_0%,transparent_45%)] opacity-60" />
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-8">
+      <div className="flex items-center justify-center pt-32">
 
-        <div className="w-full max-w-[1300px] bg-white/5 border border-white/10 rounded-[40px] p-20 backdrop-blur-xl text-center shadow-2xl">
+        <div className="w-full max-w-[600px] bg-white/5 border border-white/10 rounded-[20px] p-8 backdrop-blur-xl text-center shadow-2xl">
 
           {/* QUIZ CODE */}
-          <div className="mb-8">
-            <span className="px-8 py-3 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-2xl">
+          <div className="mb-3">
+            <span className="px-5 py-2 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs">
               Код: {quiz.code}
             </span>
           </div>
 
           {/* TITLE */}
-          <h1 className="text-8xl font-bold leading-tight mb-10">
+          <h1 className="text-2xl font-bold leading-tight mb-10">
             {quiz.title}
           </h1>
 
           {/* INFO */}
-          <div className="flex justify-center gap-10 mb-16 flex-wrap">
+          <div className="flex justify-center gap-4 mb-10 flex-wrap">
 
-            <div className="px-10 py-6 rounded-3xl bg-white/5 border border-white/10">
-              <p className="text-white/50 text-xl mb-2">
+            <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-white/50 text-xs mb-2">
                 Питання
               </p>
 
-              <p className="text-4xl font-bold">
+              <p className="text-sm font-bold">
                 {totalQuestions}
               </p>
             </div>
 
-            <div className="px-10 py-6 rounded-3xl bg-white/5 border border-white/10">
-              <p className="text-white/50 text-xl mb-2">
+            <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-white/50 text-xs mb-2">
                 Категорія
               </p>
 
-              <p className="text-4xl font-bold">
+              <p className="text-sm font-bold">
                 {quiz.category}
               </p>
             </div>
 
-            <div className="px-10 py-6 rounded-3xl bg-white/5 border border-white/10">
-              <p className="text-white/50 text-xl mb-2">
-                Складність
+            <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-white/50 text-xs mb-2">
+                Рівень
               </p>
 
-              <p className="text-4xl font-bold">
+              <p className="text-sm font-bold">
                 {quiz.difficulty}
               </p>
             </div>
 
             {quiz.hasTime && (
-              <div className="px-10 py-6 rounded-3xl bg-white/5 border border-white/10">
-                <p className="text-white/50 text-xl mb-2">
+              <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
+                <p className="text-white/50 text-xs mb-2">
                   Час на питання
                 </p>                     
-                <p className="text-4xl font-bold">
+                <p className="text-sm font-bold">
                   {quiz.timePerQuestion}
                 </p>
               </div>
@@ -284,7 +306,7 @@ if (!started) {
 
             {/* BACK */}
             <Link href="/">
-              <button className="px-14 py-6 rounded-3xl bg-white/5 border border-white/10 text-3xl hover:bg-white/10 hover:border-indigo-500 transition">
+              <button className="px-7 py-3 rounded-2xl bg-white/5 border border-white/10 text-lg hover:bg-white/10 hover:border-indigo-500 transition">
                 На головну сторінку
               </button>
             </Link>
@@ -292,7 +314,7 @@ if (!started) {
             {/* START */}
             <button
               onClick={() => setStarted(true)}
-              className="px-20 py-6 rounded-3xl bg-gradient-to-r from-indigo-500 to-purple-600 text-3xl font-bold hover:scale-105 hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transition duration-300"
+              className="px-10 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-lg font-bold hover:scale-105 hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transition duration-300"
               >
               Почати квіз
             </button>
@@ -324,35 +346,46 @@ if (finished) {
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
 
+      {/* HEADER */}
+        <header className="py-1 border-b border-white/10 text-center">
+          <h1 className="text-4xl font-bold">
+            DonQuizzz
+          </h1>
+
+          <p className="py-1 text-xs text-white/60 mt-1">
+            Інтерактивна платформа вікторин
+          </p>
+        </header>
+
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-8">
+      <div className="relative z-10 flex items-center justify-center px-8 pt-35">
 
-        <div className="w-full max-w-[1200px] bg-white/5 border border-white/10 rounded-3xl p-20 backdrop-blur-md text-center">
+        <div className="w-full max-w-[650px] bg-white/5 border border-white/10 rounded-3xl p-10 backdrop-blur-md text-center">
 
           {/* TITLE */}
-          <h1 className="text-8xl font-bold mb-8">
+          <h1 className="text-2xl font-bold mb-4">
             Квіз завершено 🎉
           </h1>
 
           {/* SCORE */}
-          <p className="text-6xl text-white/80 mb-6">
+          <p className="text-base text-white/80 mb-3 ">
             {score} / {totalQuestions}
           </p>
 
           {/* PERCENT */}
-          <p className="text-7xl font-bold text-indigo-300 mb-10">
+          <p className="text-2xl font-bold text-indigo-300 mb-3">
             {percent}%
           </p>
 
           {/* MESSAGE */}
-          <p className="text-4xl text-white/60 mb-16">
+          <p className="text-lg text-white/60 mb-8">
             {message}
           </p>
 
           {/* BUTTONS */}
-          <div className="flex justify-center gap-8">
+          <div className="flex justify-center gap-5">
 
             <button
               onClick={() => {
@@ -361,13 +394,13 @@ if (finished) {
                 setScore(0);
                 setFinished(false);
               }}
-              className="px-16 py-6 rounded-2xl bg-white text-black text-3xl font-bold hover:opacity-80 transition"
+              className="px-6 py-2 rounded-xl bg-white text-black text-xl font-bold hover:opacity-80 transition"
             >
               Спробувати ще раз
             </button>
 
             <Link href="/">
-              <button className="px-16 py-6 rounded-2xl bg-white/10 border border-white/10 text-3xl hover:bg-white/20 transition">
+              <button className="px-6 py-2 rounded-xl bg-white/10 border border-white/10 text-xl hover:bg-white/20 transition">
                 На головну
               </button>
             </Link>
@@ -390,13 +423,13 @@ if (finished) {
 
       <div className="relative z-10 w-full px-6 xl:px-16 py-8 min-h-screen flex flex-col">
 
-        {/* HEADER (оставляем как у тебя) */}
-        <header className="py-6 border-b border-white/10 text-center">
-          <h1 className="text-7xl xl:text-8xl font-bold">
+        {/* HEADER */}
+        <header className="py-1 border-b border-white/10 text-center">
+          <h1 className="text-4xl font-bold">
             DonQuizzz
           </h1>
 
-          <p className="text-white/60 text-2xl mt-4">
+          <p className="py-1 text-xs text-white/60 mt-1">
             Інтерактивна платформа вікторин
           </p>
         </header>
@@ -404,12 +437,12 @@ if (finished) {
         {/* MAIN */}
         <div className="flex-1 flex items-center justify-center">
 
-          <div className="w-full max-w-[1800px]">
+          <div className="w-full max-w-[700px]">
 
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-14 xl:p-20 backdrop-blur-md">
+            <div className="bg-white/5 border border-white/10 rounded-xl p-7 xl:p-10 backdrop-blur-md">
 
               {/* SCORE */}
-              <div className="flex justify-between mb-10 text-3xl text-white/60">
+              <div className="flex justify-between mb-3 text-xs text-white/60">
                 <p>Бал: {score}</p>
                 <p>
                   {questionIndex + 1} / {totalQuestions}
@@ -419,33 +452,33 @@ if (finished) {
               {quiz?.hasTime && (
                 <div
                   className={`
-                    text-center mb-8 transition-all duration-200
+                    text-center mb-2 transition-all duration-200
                       ${timeLeft <= 0 ? "text-red-600" : ""}
                       ${timeLeft <= 5 ? (blink ? "text-red-500" : "text-red-300") : "text-indigo-300"}
                   `}
                 >
-                  <p className="text-5xl font-bold">
+                  <p className="text-base font-bold">
                     ⏱ {timeLeft}s
                   </p>
                 </div>
               )}
 
               {/* QUESTION */}
-              <div className="mb-16">
-                <h1 className="text-8xl font-bold text-center leading-tight">
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold text-center leading-tight">
                   {question.q}
                 </h1>
               </div>
 
               {/* ANSWERS */}
-							<div className="space-y-8">
+							<div className="space-y-4">
 								{Array.isArray(question?.answers) &&
 									question.answers.map((a: string, i: number) => {
 										const isCorrect = i === question.correct;
 										const isSelected = i === selected;
 
 										let style =
-											"w-full px-14 py-14 rounded-3xl bg-black/30 border border-white/10 text-5xl text-left transition";
+											"w-full px-7 py-4 rounded-xl bg-black/30 border border-white/10 text-xl text-left transition";
 
 										if (selected !== null || isTimeUp) {
 											if (isCorrect) {
@@ -478,15 +511,15 @@ if (finished) {
         </div>
 
         {/* PROGRESS */}
-        <div className="mt-10">
+        <div className="mt-3">
 
-          <div className="flex justify-end mb-4">
-            <p className="text-white/60 text-4xl">
+          <div className="flex justify-end mb-2">
+            <p className="text-white/60 text-sm">
               Питання {questionIndex + 1} / {totalQuestions}
             </p>
           </div>
 
-          <div className="w-full h-8 bg-white/10 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
               style={{

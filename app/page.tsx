@@ -86,31 +86,31 @@ export default function Home() {
   return (
 
     
-    <main className="min-h-screen w-6xl bg-black text-white relative overflow-hidden">
+    <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
 
       {/* Background glow (как в квизе) */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
-      <div className="relative z-10 w-full px-8 xl:px-20 py-16">
+      <div className="relative z-10 w-full px-8 xl:px-20 py-2">
 
         {/* HEADER */}
-        <header className="py-6 border-b border-white/10 text-center">
-          <h1 className="text-8xl font-bold">
+        <header className="py-1 border-b border-white/10 text-center">
+          <h1 className="text-4xl font-bold">
             DonQuizzz
           </h1>
 
-          <p className="py-6 text-white/60 text-2xl mt-2">
+          <p className="py-1 text-xs text-white/60 mt-1">
             Інтерактивна платформа вікторин
           </p>
         </header>
 
         {/* SEARCH */}
-        <section className="mt-20 text-center">
-          <h2 className="text-5xl font-semibold mb-6">
+        <section className="mt-10 text-center">
+          <h2 className="text-lg font-semibold mb-2">
             Знайти квіз
           </h2>
 
-          <p className="text-white/50 text-xl mb-6">
+          <p className="text-white/50 text-xs mb-2">
             Пошук за назвою або кодом квізу
           </p>
 
@@ -124,34 +124,48 @@ export default function Home() {
                 handleSearch();
               }
             }}
-            className="w-full max-w-[1800px] px-12 py-8 rounded-2xl bg-white/5 border border-white/10 text-3xl outline-none focus:border-indigo-500 transition"
+            className="w-full max-w-[650px] px-12 py-2 rounded-lg bg-white/5 border border-white/10 text-sm outline-none focus:border-indigo-500 transition"
           />
           {search.length > 0 && (
-            <div className="mt-4 max-w-[1800px] mx-auto space-y-3">
+            <div className="mt-3 max-w-[600px] mx-auto space-y-3">
 
               {filteredQuizzes.length > 0 ? (
 
                 filteredQuizzes.slice(0, 5).map((q) => (
 
-                  <div
-                    key={q.code}
-                    onClick={() => router.push(`/quiz/${q.code}`)}
-                    className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition cursor-pointer text-left"
-                  >
-                    <p className="text-2xl font-semibold">
-                      {q.title}
-                    </p>
+                  <div className="flex text-left items-center justify-between rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition">
 
-                    <p className="text-white/50 text-lg mt-1">
-                      Код: {q.code}
-                    </p>
-                  </div>
+								    <div className="px-4 py-2">
+
+									    <p className="text-sm font-semibold">
+										    {q.title}
+									    </p>
+
+									    <p className="text-white/50 text-[10px] mt-1">
+										    {q.category} • {q.questions.length} питань • Код: {q.code}
+									    </p>
+
+								  </div>
+
+								  <div className="text-right px-4 py-2">
+
+									  <p className="text-4sm text-indigo-300">
+										  {q.difficulty}
+									  </p>
+
+									{q.hasTime && (
+										<p className="text-4sm text-indigo-300">
+											⏱ {q.timePerQuestion}с
+										</p>
+									)}  
+								</div>
+							</div>
 
                 ))
 
               ) : (
 
-                <div className="p-6 rounded-2xl bg-white/5 border border-red-500/30 text-red-300 text-2xl">
+                <div className="px-4 py-2 rounded-lg bg-white/5 border border-red-500/30 text-red-300 text-2xl">
                   Квізів не знайдено
                 </div>
 
@@ -162,12 +176,12 @@ export default function Home() {
         </section>
 
         {/* CATEGORIES */}
-        <section className="mt-24 max-w-[1800px] mx-auto">
-          <h2 className="text-5xl font-semibold mb-12">
+        <section className="mt-12 max-w-[700px] mx-auto">
+          <h2 className="text-lg font-semibold mb-3">
             Категорії
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
 
             {[
               "Спорт",
@@ -178,9 +192,9 @@ export default function Home() {
             ].map((cat) => (
               <div
                 key={cat}
-                className="p-10 rounded-3xl bg-white/5 border border-white/10 text-center hover:border-indigo-500 hover:bg-white/10 transition cursor-pointer"
+                className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center text-center justify-center hover:border-indigo-500 hover:bg-white/10 transition cursor-pointer"
               >
-                <p className="text-3xl font-semibold">{cat}</p>
+                <p className="text-sm font-semibold">{cat}</p>
               </div>
             ))}
 
@@ -188,12 +202,12 @@ export default function Home() {
         </section>
 
         {/* NEW QUIZZES */}
-        <section className="mt-28 max-w-[1800px] mx-auto">
-          <h2 className="text-5xl font-semibold mb-14">
+        <section className="mt-12 max-w-[700px] mx-auto">
+          <h2 className="text-lg font-semibold mb-3">
             Нові квізи
           </h2>
 
-				<div className="grid md:grid-cols-2 gap-8">
+				<div className="grid md:grid-cols-2 gap-4">
 
 					{newQuizzes.map((q) => (
 
@@ -203,15 +217,15 @@ export default function Home() {
 							className="block"
 						>
 
-							<div className="flex items-center justify-between p-12 rounded-3xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition">
+							<div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition">
 
 								<div>
 
-									<p className="text-4xl font-semibold">
+									<p className="text-base font-semibold">
 										{q.title}
 									</p>
 
-									<p className="text-white/50 text-2xl mt-4">
+									<p className="text-white/50 text-xs mt-4">
 										{q.category} • {q.questions.length} питань • Код: {q.code}
 									</p>
 
@@ -219,12 +233,12 @@ export default function Home() {
 
 								<div className="text-right">
 
-									<p className="text-4xl text-indigo-300">
+									<p className="text-sm text-indigo-300">
 										{q.difficulty}
 									</p>
 
 									{q.hasTime && (
-										<p className="text-white/40 text-3xl mt-2">
+										<p className="text-white/40 text-xs mt-2">
 											⏱ {q.timePerQuestion}с
 										</p>
 									)}  
@@ -236,12 +250,12 @@ export default function Home() {
         </section>
 
         {/* POPULAR QUIZZES */}
-        <section className="mt-28 max-w-[1800px] mx-auto pb-40">
-          <h2 className="text-5xl font-semibold mb-14">
+        <section className="mt-12 max-w-[700px] mx-auto pb-5">
+          <h2 className="text-lg font-semibold mb-3">
             Популярні квізи
           </h2>
 
-				<div className="space-y-10">
+				<div className="space-y-4">
 
 					{popularQuizzes.map((q) => (
 
@@ -251,15 +265,15 @@ export default function Home() {
 							className="block"
 						>
 
-							<div className="flex items-center justify-between p-14 rounded-3xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition">
+							<div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition">
 
 								<div>
 
-									<p className="text-5xl font-semibold">
+									<p className="text-base font-semibold">
 										{q.title}
 									</p>
 
-									<p className="text-white/50 text-2xl mt-4">
+									<p className="text-white/50 text-xs mt-2">
 										{q.category} • Код: {q.code}
 									</p>
 
@@ -267,17 +281,17 @@ export default function Home() {
 
 						  <div className="text-right">
 
-							  <p className="text-4xl text-indigo-300">
+							  <p className="text-sm text-indigo-300">
 								  {q.difficulty}
 							  </p>
 
 							  {q.hasTime && (
-								  <p className="text-white/40 text-3xl mt-2">
+								  <p className="text-white/40 text-xs mt-2">
 									  ⏱ {q.timePerQuestion}с / питання
 								  </p>
 							  )}
 
-							  <p className="text-white/40 text-3xl mt-1">
+							  <p className="text-white/40 text-xs mt-1">
 								  ▶ {q.timesPlayed ?? 0}
 							  </p>
 
@@ -289,8 +303,8 @@ export default function Home() {
         </section>
 
         {/* CTA */}
-        <section className="pb-28 flex justify-center">
-          <button className="bg-white text-black px-24 py-8 rounded-3xl text-4xl font-bold hover:opacity-80 transition">
+        <section className="flex justify-center">
+          <button className="my-12 bg-white text-black px-12 py-4 rounded-xl text-xl font-bold hover:opacity-80 transition">
             Створити квіз
           </button>
         </section>
