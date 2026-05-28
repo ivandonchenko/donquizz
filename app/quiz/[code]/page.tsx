@@ -187,7 +187,7 @@ if (!quiz) {
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
-      <div className="relative z-10 flex items-center justify-center px-8 pt-40">
+      <div className="relative z-10 min-h-screen flex items-center justify-center">
 
         <div className="w-full max-w-[600px] bg-white/5 border border-white/10 rounded-xl p-15 backdrop-blur-md text-center">
 
@@ -239,7 +239,7 @@ if (!started) {
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#4f46e5_0%,transparent_40%),radial-gradient(circle_at_bottom_right,#7c3aed_0%,transparent_45%)] opacity-60" />
 
-      <div className="flex items-center justify-center pt-32">
+      <div className="relative z-10 min-h-screen flex items-center justify-center">
 
         <div className="w-full max-w-[600px] bg-white/5 border border-white/10 rounded-[20px] p-8 backdrop-blur-xl text-center shadow-2xl">
 
@@ -360,7 +360,7 @@ if (finished) {
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
-      <div className="relative z-10 flex items-center justify-center px-8 pt-35">
+      <div className="relative z-10 min-h-screen flex items-center justify-center">
 
         <div className="w-full max-w-[650px] bg-white/5 border border-white/10 rounded-3xl p-10 backdrop-blur-md text-center">
 
