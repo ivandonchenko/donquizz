@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function QuizPage() {
   const params = useParams();
@@ -29,6 +30,26 @@ export default function QuizPage() {
   const [likesCount, setLikesCount] = useState(0);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+      const { user, profile } = useAuth();
+  
+  useEffect(() => {
+    if (!user) return;
+  
+    const loadData = async () => {
+      const { count } = await supabase
+        .from("quizzes")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id);
+    };
+  
+    loadData();
+  }, [user]);
+  
+  const signOut = async () => {
+      await supabase.auth.signOut();
+  };
 
   // LOAD QUIZ
 useEffect(() => {
@@ -249,6 +270,47 @@ if (!quiz) {
           </p>
         </header>
 
+        {/* ACCOUNT */}
+        <div className="mt-4 flex justify-end mx-20">
+          {user && (
+            <div className="relative z-50">
+
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition"
+              >
+                👤 {profile?.username || user.email}
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-56 rounded-xl bg-zinc-900 border border-white/10 overflow-hidden">
+
+                  <Link href="/profile" className="block px-4 py-3 hover:bg-white/5">
+                    👤 Мій профіль
+                  </Link>
+
+                  <Link href="/my-quizzes" className="block px-4 py-3 hover:bg-white/5">
+                    📝 Мої квізи
+                  </Link>
+
+                  <Link href="/liked" className="block px-4 py-3 hover:bg-white/5">
+                    ❤️ Мої лайки
+                  </Link>
+
+                  <button
+                    onClick={signOut}
+                    className="w-full text-left px-4 py-3 text-red-400 hover:bg-white/5"
+                  >
+                    🚪 Вийти
+                  </button>
+
+                </div>
+              )}
+
+            </div>
+          )}
+        </div>
+
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
@@ -301,6 +363,46 @@ if (!started) {
           </p>
         </header>
 
+      {/* ACCOUNT */}
+        <div className="mt-4 flex justify-end mx-20">
+          {user && (
+            <div className="relative z-50">
+
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition"
+              >
+                👤 {profile?.username || user.email}
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-56 rounded-xl bg-zinc-900 border border-white/10 overflow-hidden">
+
+                  <Link href="/profile" className="block px-4 py-3 hover:bg-white/5">
+                    👤 Мій профіль
+                  </Link>
+
+                  <Link href="/my-quizzes" className="block px-4 py-3 hover:bg-white/5">
+                    📝 Мої квізи
+                  </Link>
+
+                  <Link href="/liked" className="block px-4 py-3 hover:bg-white/5">
+                    ❤️ Мої лайки
+                  </Link>
+
+                  <button
+                    onClick={signOut}
+                    className="w-full text-left px-4 py-3 text-red-400 hover:bg-white/5"
+                  >
+                    🚪 Вийти
+                  </button>
+
+                </div>
+              )}
+
+            </div>
+          )}
+        </div>
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#4f46e5_0%,transparent_40%),radial-gradient(circle_at_bottom_right,#7c3aed_0%,transparent_45%)] opacity-60" />
 
@@ -463,6 +565,47 @@ if (finished) {
             Інтерактивна платформа вікторин
           </p>
         </header>
+
+      {/* ACCOUNT */}
+        <div className="mt-4 flex justify-end mx-20">
+          {user && (
+            <div className="relative z-50">
+
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition"
+              >
+                👤 {profile?.username || user.email}
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-56 rounded-xl bg-zinc-900 border border-white/10 overflow-hidden">
+
+                  <Link href="/profile" className="block px-4 py-3 hover:bg-white/5">
+                    👤 Мій профіль
+                  </Link>
+
+                  <Link href="/my-quizzes" className="block px-4 py-3 hover:bg-white/5">
+                    📝 Мої квізи
+                  </Link>
+
+                  <Link href="/liked" className="block px-4 py-3 hover:bg-white/5">
+                    ❤️ Мої лайки
+                  </Link>
+
+                  <button
+                    onClick={signOut}
+                    className="w-full text-left px-4 py-3 text-red-400 hover:bg-white/5"
+                  >
+                    🚪 Вийти
+                  </button>
+
+                </div>
+              )}
+
+            </div>
+          )}
+        </div>
 
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />

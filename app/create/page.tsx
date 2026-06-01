@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthProvider";
 
 type Question = {
   question: string;
@@ -30,11 +31,29 @@ export default function CreateQuizPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [errors, setErrors] = useState<string[]>([]);
 
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [questionCountError, setQuestionCountError] = useState(false);
   const [timeLimitError, setTimeLimitError] = useState(false);
 
-  
+  const { user, profile } = useAuth();
+
+useEffect(() => {
+  if (!user) return;
+
+  const loadData = async () => {
+    const { count } = await supabase
+      .from("quizzes")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id);
+  };
+
+  loadData();
+}, [user]);
+
+const signOut = async () => {
+    await supabase.auth.signOut();
+};  
 
 const handleNext = () => {
   let hasError = false;
@@ -237,7 +256,47 @@ if (!user) {
           Інтерактивна платформа вікторин
         </p>
       </header>
-      
+
+      {/* ACCOUNT MENU */}
+        <div className="mt-4 flex justify-end mx-20">
+          {user && (
+            <div className="relative z-50">
+
+              <button
+                onClick={() => setShowProfileMenu(prev => !prev)}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition"
+              >
+                👤 {profile?.username || user.email}
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-56 rounded-xl bg-zinc-900 border border-white/10 overflow-hidden">
+
+                  <Link href="/profile" className="block px-4 py-3 hover:bg-white/5">
+                    👤 Мій профіль
+                  </Link>
+
+                  <Link href="/my-quizzes" className="block px-4 py-3 hover:bg-white/5">
+                    📝 Мої квізи
+                  </Link>
+
+                  <Link href="/liked" className="block px-4 py-3 hover:bg-white/5">
+                    ❤️ Мої лайки
+                  </Link>
+
+                  <button
+                    onClick={signOut}
+                    className="w-full text-left px-4 py-3 text-red-400 hover:bg-white/5"
+                  >
+                    🚪 Вийти
+                  </button>
+
+                </div>
+              )}
+
+            </div>
+          )}
+        </div>      
 
       {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />

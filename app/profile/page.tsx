@@ -3,85 +3,28 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
   const [quizzesCount, setQuizzesCount] = useState(0);
 
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [editing, setEditing] = useState(false);
   const [username, setUsername] = useState("");
 
-  const [likesCount, setLikesCount] = useState(0);
   const [receivedLikes, setReceivedLikes] = useState(0);
 
-useEffect(() => {
-  async function loadReceivedLikes() {
-    if (!user) return;
-
-    // 1. берём все квизы пользователя
-    const { data: quizzes } = await supabase
-      .from("quizzes")
-      .select("id")
-      .eq("user_id", user.id);
-
-    if (!quizzes) return;
-
-    const quizIds = quizzes.map(q => q.id);
-
-    if (quizIds.length === 0) {
-      setReceivedLikes(0);
-      return;
-    }
-
-    // 2. считаем лайки по этим квизам
-    const { count } = await supabase
-      .from("quiz_likes")
-      .select("*", { count: "exact", head: true })
-      .in("quiz_id", quizIds);
-
-    setReceivedLikes(count || 0);
-  }
-
-  loadReceivedLikes();
-}, [user]);
-
-useEffect(() => {
-  const init = async () => {
-    const { data } = await supabase.auth.getUser();
-    setUser(data.user ?? null);
-  };
-
-  init();
-
-  const { data: sub } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
-      setUser(session?.user ?? null);
-    }
-  );
-
-  return () => sub.subscription.unsubscribe();
-}, []);
+  const { user, profile } = useAuth();
 
 useEffect(() => {
   if (!user) return;
 
   const loadData = async () => {
-    const [{ data: prof }, { count }] = await Promise.all([
-      supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle(),
+    const { count } = await supabase
+      .from("quizzes")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id);
 
-      supabase
-        .from("quizzes")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id),
-    ]);
-
-    setProfile(prof);
     setQuizzesCount(count || 0);
   };
 
@@ -90,21 +33,49 @@ useEffect(() => {
 
 const signOut = async () => {
     await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
 };
 
-const saveUsername = async () => {
-    if (!user) return;
+useEffect(() => {
+  if (!user) return;
 
-    await supabase
-      .from("profiles")
-      .update({ username })
-      .eq("id", user.id);
+  const loadLikes = async () => {
+    // 1. получаем id всех твоих квизов
+    const { data: quizzes } = await supabase
+      .from("quizzes")
+      .select("id")
+      .eq("user_id", user.id);
 
-    setProfile((p: any) => ({ ...p, username }));
-    setEditing(false);
+    if (!quizzes || quizzes.length === 0) {
+      setReceivedLikes(0);
+      return;
+    }
+
+    const quizIds = quizzes.map((q) => q.id);
+
+    // 2. считаем лайки на этих квизах
+    const { count } = await supabase
+      .from("quiz_likes")
+      .select("*", { count: "exact", head: true })
+      .in("quiz_id", quizIds);
+
+    setReceivedLikes(count || 0);
   };
+
+  loadLikes();
+}, [user]);
+
+const saveUsername = async () => {
+  if (!user) return;
+
+  await supabase
+    .from("profiles")
+    .update({ username })
+    .eq("id", user.id);
+
+  setEditing(false);
+};
+
+
 
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">

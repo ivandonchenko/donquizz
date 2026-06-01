@@ -3,28 +3,31 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function MyQuizzesPage() {
-  const [user, setUser] = useState<any>(null);
+  const { user, profile } = useAuth();
+
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
+  if (!user) return;
 
-    const { data: sub } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
+  async function load() {
+    const { data } = await supabase
+      .from("quizzes")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
-    return () => sub.subscription.unsubscribe();
-  }, []);
+    setQuizzes(data || []);
+    setLoading(false);
+  }
+
+  load();
+}, [user]);
 
   useEffect(() => {
     async function load() {
@@ -43,26 +46,9 @@ export default function MyQuizzesPage() {
     load();
   }, [user]);
 
-  useEffect(() => {
-    async function loadProfile() {
-      if (!user) return;
-
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      setProfile(data);
-    }
-
-    loadProfile();
-  }, [user]);
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-  };
+const signOut = async () => {
+  await supabase.auth.signOut();
+};
 
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">

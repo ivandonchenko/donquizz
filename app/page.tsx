@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthProvider";
 
 
 export default function Home() {
   const [quizzes, setQuizzes] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [pageLoading, setLoading] = useState(true);
 
   const [plays, setPlays] = useState<Record<string, number>>({});
   const [search, setSearch] = useState("");
 
-  const [user, setUser] = useState<any>(null);  
   const [showAuth, setShowAuth] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
 
@@ -22,51 +22,7 @@ export default function Home() {
   const [username, setUsername] = useState("");
   
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
-
-useEffect(() => {
-  const loadUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    setUser(user);
-
-    if (user) {
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      setProfile(profileData);
-    }
-  };
-
-  loadUser();
-
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange(
-    async (_event, session) => {
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-
-        setProfile(profileData);
-      } else {
-        setProfile(null);
-      }
-    }
-  );
-
-  return () => subscription.unsubscribe();
-}, []);
+  const { user, profile } = useAuth();
 
   useEffect(() => {
     async function loadQuizzes() {
@@ -176,7 +132,6 @@ const signUp = async () => {
 
 const signOut = async () => {
   await supabase.auth.signOut();
-  setUser(null);
 };
 
   return (
