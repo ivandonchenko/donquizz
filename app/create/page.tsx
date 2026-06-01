@@ -96,7 +96,7 @@ const handleNext = () => {
   setStep(2);
 };
 
-  const updateQuestion = (
+const updateQuestion = (
     index: number,
     field: keyof Question,
     value: string | number | string[]
@@ -215,11 +215,11 @@ if (!user) {
 
   if (error) {
     console.error(error);
-    alert("Ошибка при создании квиза");
+    alert("Помилка при створенні квіза");
     return;
   }
 
-  alert("Викторина создана!");
+  alert("Квіз створений!");
 
   window.location.href = `/quiz/${code}`;
 };

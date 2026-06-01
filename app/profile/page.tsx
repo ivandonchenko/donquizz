@@ -48,65 +48,51 @@ useEffect(() => {
 }, [user]);
 
 useEffect(() => {
-  async function loadLikes() {
-    if (!user) return;
+  const init = async () => {
+    const { data } = await supabase.auth.getUser();
+    setUser(data.user ?? null);
+  };
 
-    const { count } = await supabase
-      .from("quiz_likes")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
+  init();
 
-    setLikesCount(count || 0);
-  }
+  const { data: sub } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      setUser(session?.user ?? null);
+    }
+  );
 
-  loadLikes();
-}, [user]);
+  return () => sub.subscription.unsubscribe();
+}, []);
 
+useEffect(() => {
+  if (!user) return;
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
-
-    const { data: sub } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    async function loadData() {
-      if (!user) return;
-
-      // профиль
-      const { data: prof } = await supabase
+  const loadData = async () => {
+    const [{ data: prof }, { count }] = await Promise.all([
+      supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
-        .maybeSingle();
+        .maybeSingle(),
 
-      setProfile(prof);
-
-      // количество квизов
-      const { count } = await supabase
+      supabase
         .from("quizzes")
         .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id);
+        .eq("user_id", user.id),
+    ]);
 
-      setQuizzesCount(count || 0);
-    }
-
-    loadData();
-  }, [user]);
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
+    setProfile(prof);
+    setQuizzesCount(count || 0);
   };
 
+  loadData();
+}, [user]);
+
+const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfile(null);
+};
 
 const saveUsername = async () => {
     if (!user) return;
