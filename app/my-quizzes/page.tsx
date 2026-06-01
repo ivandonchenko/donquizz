@@ -179,6 +179,15 @@ export default function MyQuizzesPage() {
         </section>
 
       </div>
+
+      {/* BACK BUTTON */}
+                <div className="flex justify-center mt-10">
+                    <Link href="/">
+                        <button className="bg-white text-black px-10 py-3 rounded-xl font-bold hover:opacity-80 transition">
+                            Назад
+                        </button>
+                    </Link>
+                </div>
     </main>
   );
 }
