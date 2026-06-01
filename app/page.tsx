@@ -75,13 +75,9 @@ export default function Home() {
         q.code.toLowerCase() === value
       );
     });
+  }
 
-    if (found) {
-      router.push(`/quiz/${found.code}`);
-    } else {
-      router.push(`/quiz/notfound`);
-    }
-  };
+
 
   return (
 
@@ -181,31 +177,30 @@ export default function Home() {
           )}
         </section>
 
-        {/* CATEGORIES */}
-        <section className="mt-12 max-w-[700px] mx-auto">
-          <h2 className="text-lg font-semibold mb-3">
+    {/* CATEGORIES */}
+    <section className="mt-12 max-w-[700px] mx-auto">
+        <h2 className="text-lg font-semibold mb-3">
             Категорії
-          </h2>
+        </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
-              "Спорт",
-              "Уроки",
-              "Географія",
-              "Загальні знання",  
-              "Інше"
+                "Спорт",
+                "Уроки",
+                "Географія",
+                "Загальні знання",
+                "Інше"
             ].map((cat) => (
-              <div
-                key={cat}
-                className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center text-center justify-center hover:border-indigo-500 hover:bg-white/10 transition cursor-pointer"
-              >
-                <p className="text-sm font-semibold">{cat}</p>
-              </div>
+                <Link
+                    key={cat}
+                    href={`/categories/${encodeURIComponent(cat)}`}
+                    className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-center hover:border-indigo-500 hover:bg-white/10 transition"
+                >
+                    <p className="text-sm font-semibold">{cat}</p>
+                </Link>
             ))}
-
-          </div>
-        </section>
+        </div>
+    </section>
 
         {/* NEW QUIZZES */}
         <section className="mt-12 max-w-[700px] mx-auto">
@@ -310,9 +305,11 @@ export default function Home() {
 
         {/* CTA */}
         <section className="flex justify-center">
+          <Link href={`/create`}>
           <button className="my-12 bg-white text-black px-12 py-4 rounded-xl text-xl font-bold hover:opacity-80 transition">
             Створити квіз
           </button>
+          </Link>
         </section>
 
       </div>
