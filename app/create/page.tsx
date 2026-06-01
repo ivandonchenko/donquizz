@@ -409,14 +409,14 @@ const handleCreateQuiz = async () => {
                 <Link href="/">
                 <button
                     onClick={handleNext}
-                    className="px-22 py-3 rounded-2xl bg-white/5 border border-white/10 text-lg hover:bg-white/10 hover:border-indigo-500 transitionrounded-2xl bg-white/5 border border-white/10 text-lg hover:bg-white/10 hover:border-indigo-500 transition"
+                    className="w-full py-3 rounded-2xl bg-white/5 border border-white/10 text-lg hover:bg-white/10 hover:border-indigo-500 transitionrounded-2xl bg-white/5 border border-white/10 text-lg hover:bg-white/10 hover:border-indigo-500 transition"
                 >
                     На головну сторінку
                 </button>
                 </Link>
                 <button
                     onClick={handleNext}
-                    className="px-52 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-lg font-bold hover:scale-105 hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transition duration-300"
+                    className="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-lg font-bold hover:scale-105 hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transition duration-300"
                 >
                     Далі
                 </button>
