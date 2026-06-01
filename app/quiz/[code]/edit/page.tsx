@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 
@@ -11,30 +11,79 @@ type Question = {
   correctAnswer: number;
 };
 
-export default function CreateQuizPage() {
+export default function EditQuizPage() {
   const MIN_TEXT_LENGTH = 3;
+  const { code } = useParams();
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
 
   const [step, setStep] = useState(1);
 
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Загальні знання");
-  const [difficulty, setDifficulty] = useState("Середня");
+const [title, setTitle] = useState("");
+const [category, setCategory] = useState("Загальні знання");
+const [difficulty, setDifficulty] = useState("Середня");
 
-  const [timed, setTimed] = useState(false);
-  const [timeLimit, setTimeLimit] = useState(15);
+const [timed, setTimed] = useState(false);
+const [timeLimit, setTimeLimit] = useState(15);
 
-  const [questionCount, setQuestionCount] = useState(10);
+const [questionCount, setQuestionCount] = useState(10);
+const [questions, setQuestions] = useState<Question[]>([]);
 
-  const [questions, setQuestions] = useState<Question[]>([]);
-
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [errors, setErrors] = useState<string[]>([]);
+const [currentQuestion, setCurrentQuestion] = useState(0);
+const [errors, setErrors] = useState<string[]>([]);
 
   const [titleError, setTitleError] = useState(false);
   const [questionCountError, setQuestionCountError] = useState(false);
   const [timeLimitError, setTimeLimitError] = useState(false);
 
-  
+useEffect(() => {
+  const load = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+
+    if (!user) {
+      router.push("/");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("quizzes")
+      .select("*")
+      .eq("code", code)
+      .single();
+
+    if (error || !data) {
+      router.push("/");
+      return;
+    }
+
+    if (data.user_id !== user.id) {
+      alert("Нельзя редактировать чужой квиз");
+      router.push("/");
+      return;
+    }
+
+    setTitle(data.title);
+    setCategory(data.category);
+    setDifficulty(data.difficulty);
+    setTimed(data.hasTime);
+    setTimeLimit(data.timePerQuestion || 15);
+
+    const mapped = data.questions.map((q: any) => ({
+      question: q.q,
+      answers: q.answers,
+      correctAnswer: q.correct,
+    }));
+
+    setQuestions(mapped);
+    setQuestionCount(mapped.length);
+
+    setLoading(false);
+  };
+
+  load();
+}, [code]);
 
 const handleNext = () => {
   let hasError = false;
@@ -96,7 +145,7 @@ const handleNext = () => {
   setStep(2);
 };
 
-  const updateQuestion = (
+const updateQuestion = (
     index: number,
     field: keyof Question,
     value: string | number | string[]
@@ -177,53 +226,37 @@ const getQuestionStatus = (index: number) => {
   return "default";
 };
 
-const handleCreateQuiz = async () => {
-  if (!validateQuiz()) return;
 
-  const code = Math.random()
-    .toString(36)
-    .substring(2, 8)
-    .toUpperCase();
-
+const handleSave = async () => {
   const formattedQuestions = questions.map((q) => ({
     q: q.question,
     answers: q.answers,
     correct: q.correctAnswer,
   }));
 
-const {
-  data: { user },
-} = await supabase.auth.getUser();
-
-if (!user) {
-  alert("Увійдіть в акаунт");
-  return;
-}
-
-  const { error } = await supabase.from("quizzes").insert({
-    user_id: user.id,
-
-    code,
-    title,
-    category,
-    difficulty,
-    questions: formattedQuestions,
-    hasTime: timed,
-    timePerQuestion: timed ? timeLimit : null,
-    timesPlayed: 0,
-  });
+  const { error } = await supabase
+    .from("quizzes")
+    .update({
+      title,
+      category,
+      difficulty,
+      questions: formattedQuestions,
+      hasTime: timed,
+      timePerQuestion: timed ? timeLimit : null,
+    })
+    .eq("code", code);
 
   if (error) {
-    console.error(error);
-    alert("Ошибка при создании квиза");
+    alert("Ошибка при обновлении");
     return;
   }
 
-  alert("Викторина создана!");
-
-  window.location.href = `/quiz/${code}`;
+  alert("Квиз обновлён!");
+  router.push(`/quiz/${code}`);
 };
 
+
+  if (loading) return <div className="text-white">Loading...</div>;
 
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
@@ -246,7 +279,7 @@ if (!user) {
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <h2 className="text-3xl font-bold mb-2">
-          Створення вікторини
+          Редагування вікторини
         </h2>
 
         <p className="text-white/50 mb-8">
@@ -627,10 +660,10 @@ if (!user) {
     </div>
 
     <button
-      onClick={handleCreateQuiz}
+      onClick={handleSave}
       className="w-full bg-white text-black font-bold py-3 rounded-xl hover:opacity-80 transition"
     >
-      Створити вікторину
+      Зберегти зміни
     </button>
     </div>
     )}

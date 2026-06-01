@@ -13,6 +13,61 @@ export default function Home() {
   const [plays, setPlays] = useState<Record<string, number>>({});
   const [search, setSearch] = useState("");
 
+  const [user, setUser] = useState<any>(null);  
+  const [showAuth, setShowAuth] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
+
+useEffect(() => {
+  const loadUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    setUser(user);
+
+    if (user) {
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      setProfile(profileData);
+    }
+  };
+
+  loadUser();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(
+    async (_event, session) => {
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+
+        setProfile(profileData);
+      } else {
+        setProfile(null);
+      }
+    }
+  );
+
+  return () => subscription.unsubscribe();
+}, []);
+
   useEffect(() => {
     async function loadQuizzes() {
       const { data, error } = await supabase.from("quizzes").select("*");
@@ -77,7 +132,52 @@ export default function Home() {
     });
   }
 
+const signInWithGoogle = async () => {
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+  });
+};
 
+const signIn = async () => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setShowAuth(false);
+};
+
+const signUp = async () => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  if (data.user) {
+    await supabase.from("profiles").insert({
+      id: data.user.id,
+      username,
+    });
+  }
+
+  alert("Акаунт створено");
+  setShowAuth(false);
+};
+
+const signOut = async () => {
+  await supabase.auth.signOut();
+  setUser(null);
+};
 
   return (
 
@@ -99,6 +199,64 @@ export default function Home() {
             Інтерактивна платформа вікторин
           </p>
         </header>
+
+        <div className="mt-4 flex justify-end">
+          {user ? (
+            <div className="relative">
+
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition"
+              >
+                👤 {profile?.username || user.email}
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-56 rounded-xl bg-zinc-900 border border-white/10 overflow-hidden">
+
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-3 hover:bg-white/5"
+                  >
+                    👤 Мій профіль
+                  </Link>
+
+                  <Link
+                    href="/my-quizzes"
+                    className="block px-4 py-3 hover:bg-white/5"
+                  >
+                    📝 Мої квізи
+                  </Link>
+
+                  <Link
+                    href="/liked"
+                    className="block px-4 py-3 hover:bg-white/5"
+                  >
+                    ❤️ Мої лайки
+                  </Link>
+
+                  <button
+                    onClick={signOut}
+                    className="w-full text-left px-4 py-3 text-red-400 hover:bg-white/5"
+                  >
+                    🚪 Вийти
+                  </button>
+
+                </div>
+              )}
+
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAuth(true)}
+              className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500 hover:bg-white/10 transition"
+            >
+              Увійти / Зареєструватися
+            </button>
+          )}
+        </div>
+
+        
 
         {/* SEARCH */}
         <section className="mt-10 text-center">
@@ -313,6 +471,78 @@ export default function Home() {
         </section>
 
       </div>
+
+      {showAuth && (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div className="w-full max-w-md bg-zinc-900 border border-white/10 rounded-2xl p-6">
+
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        {isRegister ? "Реєстрація" : "Вхід"}
+      </h2>
+
+      {isRegister && (
+        <input
+          type="text"
+          placeholder="Логін"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full mb-3 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+        />
+      )}
+
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full mb-3 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+      />
+
+      <input
+        type="password"
+        placeholder="Пароль"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full mb-4 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+      />
+
+      <button
+        onClick={isRegister ? signUp : signIn}
+        className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 font-bold"
+      >
+        {isRegister ? "Зареєструватися" : "Увійти"}
+      </button>
+
+      <div className="my-4 text-center text-white/40">
+        або
+      </div>
+
+      <button
+        onClick={signInWithGoogle}
+        className="w-full py-3 rounded-xl bg-white text-black font-semibold"
+      >
+        Google
+      </button>
+
+      <button
+        onClick={() => setIsRegister(!isRegister)}
+        className="w-full mt-4 text-indigo-400 hover:text-indigo-300"
+      >
+        {isRegister
+          ? "Вже є акаунт?"
+          : "Зареєструватися"}
+      </button>
+
+      <button
+        onClick={() => setShowAuth(false)}
+        className="w-full mt-2 text-white/50"
+      >
+        Закрити
+      </button>
+
+    </div>
+    </div>
+    )}
     </main>
   );
 }

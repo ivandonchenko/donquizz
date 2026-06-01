@@ -22,36 +22,73 @@ export default function QuizPage() {
   const [blink, setBlink] = useState(false);
   const [locked, setLocked] = useState(false);
 
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isOwner, setIsOwner] = useState(false);
+
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // LOAD QUIZ
-  useEffect(() => {
-    const loadQuiz = async () => {
-      if (!code) return;
+useEffect(() => {
+  const loadQuiz = async () => {
+    if (!code) return;
 
-      const { data, error } = await supabase
-        .from("quizzes")
-        .select("*")
-        .eq("code", code)
-        .single();
+    const { data: userData } = await supabase.auth.getUser();
+    setCurrentUser(userData.user);
 
-      if (error) {
-        console.log("load error:", error);
-        setLoading(false);
-        return;
-      }
+    const { data, error } = await supabase
+      .from("quizzes")
+      .select("*")
+      .eq("code", code)
+      .single();
 
-      setQuiz({
-        ...data,
-        questions: typeof data.questions === "string"
-          ? JSON.parse(data.questions)
-          : data.questions
-      });
-      setLoading(false);
-    };
+    if (error) return;
 
-    loadQuiz();
-  }, [code]);
+    setQuiz(data);
+
+    if (userData.user && data.user_id === userData.user.id) {
+      setIsOwner(true);
+    }
+
+    setLoading(false);
+  };
+
+  loadQuiz();
+}, [code]);
+
+const toggleLike = async () => {
+  if (!currentUser || !quiz) return;
+
+  const newLiked = !liked;
+
+  setLiked(newLiked);
+  setLikesCount((c) => c + (newLiked ? 1 : -1));
+
+  if (newLiked) {
+    const { error } = await supabase.from("quiz_likes").insert({
+      quiz_id: quiz.id,
+      user_id: currentUser.id,
+    });
+
+    if (error) {
+      setLiked(false);
+      setLikesCount((c) => c - 1);
+    }
+  } else {
+    const { error } = await supabase
+      .from("quiz_likes")
+      .delete()
+      .eq("quiz_id", quiz.id)
+      .eq("user_id", currentUser.id);
+
+    if (error) {
+      setLiked(true);
+      setLikesCount((c) => c + 1);
+    }
+  }
+};
 
   
   // ANSWER LOGIC
@@ -163,6 +200,34 @@ export default function QuizPage() {
 
     return () => clearInterval(interval);
   }, [timeLeft, quiz]);
+
+useEffect(() => {
+  if (!quiz) return;
+
+  const loadLikes = async () => {
+    // COUNT
+    const { count } = await supabase
+      .from("quiz_likes")
+      .select("*", { count: "exact", head: true })
+      .eq("quiz_id", quiz.id);
+
+    setLikesCount(count || 0);
+
+    // USER LIKE
+    if (!currentUser) return;
+
+    const { data } = await supabase
+      .from("quiz_likes")
+      .select("*")
+      .eq("quiz_id", quiz.id)
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    setLiked(!!data);
+  };
+
+  loadLikes();
+}, [quiz, currentUser]);
 
   // LOADING STATE
 if (loading) {
@@ -302,7 +367,23 @@ if (!started) {
           </div>
 
           {/* ACTIONS */}
-          <div className="flex justify-center gap-6 flex-wrap">
+          {currentUser && !isOwner && (
+            <button
+              onClick={toggleLike}
+              className={`
+                mb-7 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500 transition
+                ${liked
+                  ? "bg-red-500/20 border-red-400 text-red-300"
+                  : "bg-white/5 border-white/10 hover:border-red-400"
+                }`}
+            >
+              <span className="text-lg">
+                {liked ? "❤️" : "🤍"}
+              </span>
+              <span>{likesCount}</span>
+            </button>
+          )}
+          <div className="mb-10 flex justify-center gap-6 flex-wrap">
 
             {/* BACK */}
             <Link href="/">
@@ -320,6 +401,32 @@ if (!started) {
             </button>
 
           </div>
+
+          {isOwner && (
+            <div className="flex gap-3 justify-center mb-4">
+
+              <Link href={`/quiz/${quiz.code}/edit`}>
+                <button className="px-4 py-2 rounded-xl bg-indigo-500">
+                  ✏️ Редагувати
+                </button>
+              </Link>
+
+              <button
+                onClick={async () => {
+                  await supabase
+                    .from("quizzes")
+                    .delete()
+                    .eq("code", quiz.code);
+
+                  window.location.href = "/";
+                }}
+                className="px-4 py-2 rounded-xl bg-red-500"
+              >
+                🗑 Видалити
+              </button>
+
+            </div>
+          )}
         </div>
       </div>
 
@@ -385,6 +492,23 @@ if (finished) {
           </p>
 
           {/* BUTTONS */}
+
+          {currentUser && !isOwner && (
+            <button
+              onClick={toggleLike}
+              className={`
+                mb-7 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500 transition
+                ${liked
+                  ? "bg-red-500/20 border-red-400 text-red-300"
+                  : "bg-white/5 border-white/10 hover:border-red-400"
+                }`}
+            >
+              <span className="text-lg">
+                {liked ? "❤️" : "🤍"}
+              </span>
+              <span>{likesCount}</span>
+            </button>
+          )}
           <div className="flex justify-center gap-5">
 
             <button
