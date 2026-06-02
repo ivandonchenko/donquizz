@@ -68,20 +68,6 @@ useEffect(() => {
   };
 }, []);
 
-  useEffect(() => {
-    async function loadQuizzes() {
-      const { data, error } = await supabase.from("quizzes").select("*");
-
-      if (!error && data) {
-        setQuizzes(data);
-      }
-
-      setLoading(false);
-    }
-
-    loadQuizzes();
-  }, []);
-
   const router = useRouter();
 
   const filteredQuizzes = (quizzes ?? []).filter((q) => {
