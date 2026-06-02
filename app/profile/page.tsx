@@ -14,7 +14,7 @@ export default function ProfilePage() {
 
   const [receivedLikes, setReceivedLikes] = useState(0);
 
-  const { user, profile, refreshProfile, setProfile } = useAuth();
+  const { user, profile, setProfile } = useAuth();
 
 useEffect(() => {
   if (!user) return;
@@ -90,9 +90,7 @@ const saveUsername = async () => {
 
       {/* background glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
-
-      <div className="relative z-10 w-full px-8 xl:px-20 py-2">
-
+        
         {/* HEADER */}
         <header className="py-1 border-b border-white/10 text-center">
           <h1 className="text-4xl font-bold">DonQuizzz</h1>
@@ -100,6 +98,8 @@ const saveUsername = async () => {
             Інтерактивна платформа вікторин
           </p>
         </header>
+
+      <div className="relative z-10 w-full px-8 xl:px-20 py-2">
 
         {/* ACCOUNT MENU */}
         <div className="mt-4 flex justify-end">

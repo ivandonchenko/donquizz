@@ -259,6 +259,9 @@ if (!quiz) {
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
 
+      {/* BACKGROUND */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
+
       {/* HEADER */}
         <header className="py-1 border-b border-white/10 text-center">
           <h1 className="text-4xl font-bold">
@@ -270,7 +273,9 @@ if (!quiz) {
           </p>
         </header>
 
-        {/* ACCOUNT */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center">
+
+                {/* ACCOUNT */}
         <div className="mt-4 flex justify-end mx-20">
           {user && (
             <div className="relative z-50">
@@ -311,10 +316,6 @@ if (!quiz) {
           )}
         </div>
 
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
-
-      <div className="relative z-10 min-h-screen flex items-center justify-center">
 
         <div className="w-full max-w-[600px] bg-white/5 border border-white/10 rounded-xl p-15 backdrop-blur-md text-center">
 
@@ -351,6 +352,9 @@ if (!question || !Array.isArray(question.answers)) {
 if (!started) {
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
+
+      {/* BACKGROUND */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
       {/* HEADER */}
         <header className="py-1 border-b border-white/10 text-center">
@@ -403,8 +407,6 @@ if (!started) {
             </div>
           )}
         </div>
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#4f46e5_0%,transparent_40%),radial-gradient(circle_at_bottom_right,#7c3aed_0%,transparent_45%)] opacity-60" />
 
       <div className="relative z-10 min-h-screen flex items-center justify-center">
 
@@ -555,6 +557,9 @@ if (finished) {
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
 
+      {/* BACKGROUND */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
+
       {/* HEADER */}
         <header className="py-1 border-b border-white/10 text-center">
           <h1 className="text-4xl font-bold">
@@ -606,9 +611,6 @@ if (finished) {
             </div>
           )}
         </div>
-
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
 
       <div className="relative z-10 min-h-screen flex items-center justify-center">
 
