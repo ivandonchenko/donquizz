@@ -20,8 +20,8 @@ export default function CategoryPage() {
     const [minQuestions, setMinQuestions] = useState(0);
     const [difficultyFilter, setDifficultyFilter] = useState<string[]>([]);
 
-      const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const { user, profile } = useAuth();
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const { user, profile } = useAuth();
 
 useEffect(() => {
   if (!user) return;
@@ -116,9 +116,7 @@ const signOut = async () => {
           </p>
         </header>
 
-            {/* BACKGROUND */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
-            {/* ACCOUNT */}
+        {/* ACCOUNT */}
         <div className="mt-4 flex justify-end mx-20">
           {user && (
             <div className="relative">
@@ -158,6 +156,10 @@ const signOut = async () => {
             </div>
           )}
         </div>
+
+            {/* BACKGROUND */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#4f46e5_0%,transparent_45%),radial-gradient(circle_at_bottom,#7c3aed_0%,transparent_50%)] opacity-50" />
+            
 
             <div className="relative z-10 max-w-4xl mx-auto px-8 py-10">
 

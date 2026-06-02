@@ -12,39 +12,41 @@ export default function MyQuizzesPage() {
   const [loading, setLoading] = useState(true);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  useEffect(() => {
-  if (!user) return;
+useEffect(() => {
+  let isMounted = true;
 
   async function load() {
-    const { data } = await supabase
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    const { data, error } = await supabase
       .from("quizzes")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
-    setQuizzes(data || []);
+    if (!isMounted) return;
+
+    if (error) {
+      console.error(error);
+      setQuizzes([]);
+    } else {
+      setQuizzes(data || []);
+    }
+
     setLoading(false);
   }
 
   load();
-}, [user]);
 
-  useEffect(() => {
-    async function load() {
-      if (!user) return;
-
-      const { data } = await supabase
-        .from("quizzes")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-
-      setQuizzes(data || []);
-      setLoading(false);
-    }
-
-    load();
-  }, [user]);
+  return () => {
+    isMounted = false;
+  };
+}, [user?.id]);
 
 const signOut = async () => {
   await supabase.auth.signOut();
@@ -163,17 +165,19 @@ const signOut = async () => {
           </button>
           </Link>
         </section>
+        
+        {/* BACK BUTTON */}
+        <div className="flex justify-center mt-10">
+          <Link href="/">
+            <button className="bg-white text-black px-10 py-3 rounded-xl font-bold hover:opacity-80 transition">
+              Назад
+            </button>
+          </Link>
+        </div>
 
       </div>
 
-      {/* BACK BUTTON */}
-                <div className="flex justify-center mt-10">
-                    <Link href="/">
-                        <button className="bg-white text-black px-10 py-3 rounded-xl font-bold hover:opacity-80 transition">
-                            Назад
-                        </button>
-                    </Link>
-                </div>
+      
     </main>
   );
 }
