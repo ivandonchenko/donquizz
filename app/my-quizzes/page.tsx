@@ -12,8 +12,9 @@ export default function MyQuizzesPage() {
   const [loading, setLoading] = useState(true);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-useEffect(() => {
   const userId = user?.id;
+
+useEffect(() => {
   if (!userId) return;
 
   let isMounted = true;
@@ -44,7 +45,7 @@ useEffect(() => {
   return () => {
     isMounted = false;
   };
-}, [user?.id]);
+}, [userId]);
 
 const signOut = async () => {
   await supabase.auth.signOut();
