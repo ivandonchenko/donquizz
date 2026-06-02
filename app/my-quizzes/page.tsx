@@ -13,7 +13,8 @@ export default function MyQuizzesPage() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
 useEffect(() => {
-  if (!user) return;
+  const userId = user?.id;
+  if (!userId) return;
 
   let isMounted = true;
 
@@ -23,7 +24,7 @@ useEffect(() => {
     const { data, error } = await supabase
       .from("quizzes")
       .select("*")
-      .eq("user_id", user?.id ?? "")
+      .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
     if (!isMounted) return;
@@ -43,7 +44,7 @@ useEffect(() => {
   return () => {
     isMounted = false;
   };
-}, [user]);
+}, [user?.id]);
 
 const signOut = async () => {
   await supabase.auth.signOut();
