@@ -14,12 +14,16 @@ type AuthContextType = {
   user: User | null;
   profile: any;
   loading: boolean;
+  refreshProfile: () => Promise<void>;
+  setProfile: React.Dispatch<React.SetStateAction<any>>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   loading: true,
+  refreshProfile: async () => {},
+  setProfile: () => {},
 });
 
 export function AuthProvider({
@@ -47,6 +51,11 @@ export function AuthProvider({
     }
 
     setProfile(data);
+  };
+
+  const refreshProfile = async () => {
+    if (!user) return;
+    await loadProfile(user.id);
   };
 
   // =========================
@@ -127,6 +136,8 @@ export function AuthProvider({
         user,
         profile,
         loading,
+        refreshProfile,
+        setProfile,
       }}
     >
       {children}

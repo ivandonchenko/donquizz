@@ -14,7 +14,7 @@ export default function ProfilePage() {
 
   const [receivedLikes, setReceivedLikes] = useState(0);
 
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile, setProfile } = useAuth();
 
 useEffect(() => {
   if (!user) return;
@@ -67,15 +67,23 @@ useEffect(() => {
 const saveUsername = async () => {
   if (!user) return;
 
-  await supabase
+  const { error } = await supabase
     .from("profiles")
     .update({ username })
     .eq("id", user?.id);
 
+  if (error) {
+    console.error("UPDATE ERROR:", error);
+    return;
+  }
+
+  setProfile((prev: any) => ({
+    ...prev,
+    username,
+  }));
+
   setEditing(false);
 };
-
-
 
   return (
     <main className="min-h-screen w-full bg-black text-white relative overflow-hidden">
@@ -244,4 +252,4 @@ const saveUsername = async () => {
       </div>
     </main>
   );
-}
+}   
