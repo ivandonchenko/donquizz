@@ -151,7 +151,7 @@ const signUp = async () => {
 
   if (data.user) {
     await supabase.from("profiles").insert({
-      id: data.user.id,
+      id: data.user?.id,
       username,
     });
   }

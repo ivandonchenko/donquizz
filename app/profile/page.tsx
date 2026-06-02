@@ -23,7 +23,7 @@ useEffect(() => {
     const { count } = await supabase
       .from("quizzes")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
+      .eq("user_id", user?.id);
 
     setQuizzesCount(count || 0);
   };
@@ -43,7 +43,7 @@ useEffect(() => {
     const { data: quizzes } = await supabase
       .from("quizzes")
       .select("id")
-      .eq("user_id", user.id);
+      .eq("user_id", user?.id);
 
     if (!quizzes || quizzes.length === 0) {
       setReceivedLikes(0);
@@ -70,7 +70,7 @@ const saveUsername = async () => {
   await supabase
     .from("profiles")
     .update({ username })
-    .eq("id", user.id);
+    .eq("id", user?.id);
 
   setEditing(false);
 };

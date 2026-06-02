@@ -48,7 +48,7 @@ useEffect(() => {
     const { count } = await supabase
       .from("quizzes")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
+      .eq("user_id", user?.id);
   };
 
   loadData();
@@ -79,7 +79,7 @@ useEffect(() => {
       return;
     }
 
-    if (data.user_id !== user.id) {
+    if (data.user_id !== user?.id) {
       alert("Нельзя редактировать чужой квиз");
       router.push("/");
       return;

@@ -41,7 +41,7 @@ export default function QuizPage() {
       const { count } = await supabase
         .from("quizzes")
         .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id);
+        .eq("user_id", user?.id);
     };
   
     loadData();
@@ -69,7 +69,7 @@ useEffect(() => {
 
     setQuiz(data);
 
-    if (userData.user && data.user_id === userData.user.id) {
+    if (userData.user && data.user_id === userData.user?.id) {
       setIsOwner(true);
     }
 
