@@ -13,20 +13,17 @@ export default function MyQuizzesPage() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
 useEffect(() => {
+  if (!user) return;
+
   let isMounted = true;
 
   async function load() {
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
 
     const { data, error } = await supabase
       .from("quizzes")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", user?.id ?? "")
       .order("created_at", { ascending: false });
 
     if (!isMounted) return;
@@ -46,7 +43,7 @@ useEffect(() => {
   return () => {
     isMounted = false;
   };
-}, [user?.id]);
+}, [user]);
 
 const signOut = async () => {
   await supabase.auth.signOut();
@@ -165,7 +162,7 @@ const signOut = async () => {
           </button>
           </Link>
         </section>
-        
+
         {/* BACK BUTTON */}
         <div className="flex justify-center mt-10">
           <Link href="/">
