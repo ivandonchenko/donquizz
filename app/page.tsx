@@ -24,6 +24,30 @@ export default function Home() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { user, profile } = useAuth();
 
+useEffect(() => {
+  const refetch = async () => {
+    const { data, error } = await supabase
+      .from("quizzes")
+      .select("*");
+
+    if (!error && data) {
+      setQuizzes(data);
+    }
+  };
+
+  const handleVisibility = () => {
+    if (document.visibilityState === "visible") {
+      refetch();
+    }
+  };
+
+  window.addEventListener("visibilitychange", handleVisibility);
+
+  return () => {
+    window.removeEventListener("visibilitychange", handleVisibility);
+  };
+}, []);
+
   useEffect(() => {
     async function loadQuizzes() {
       const { data, error } = await supabase.from("quizzes").select("*");
