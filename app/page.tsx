@@ -25,25 +25,45 @@ export default function Home() {
   const { user, profile } = useAuth();
 
 useEffect(() => {
-  const refetch = async () => {
+  let isMounted = true;
+  let requestId = 0;
+
+  const fetchQuizzes = async () => {
+    const currentRequest = ++requestId;
+
+    setLoading(true);
+
     const { data, error } = await supabase
       .from("quizzes")
       .select("*");
 
-    if (!error && data) {
-      setQuizzes(data);
+    // ❗ если уже был новый запрос — игнорируем старый ответ
+    if (!isMounted || currentRequest !== requestId) return;
+
+    if (error) {
+      console.error("QUIZZES ERROR:", error);
+      setLoading(false);
+      return;
     }
+
+    setQuizzes(data || []);
+    setLoading(false);
   };
 
+  // initial load
+  fetchQuizzes();
+
+  // tab focus fix
   const handleVisibility = () => {
     if (document.visibilityState === "visible") {
-      refetch();
+      setTimeout(fetchQuizzes, 150);
     }
   };
 
   window.addEventListener("visibilitychange", handleVisibility);
 
   return () => {
+    isMounted = false;
     window.removeEventListener("visibilitychange", handleVisibility);
   };
 }, []);
@@ -64,7 +84,7 @@ useEffect(() => {
 
   const router = useRouter();
 
-  const filteredQuizzes = quizzes.filter((q) => {
+  const filteredQuizzes = (quizzes ?? []).filter((q) => {
 
   const value = search.toLowerCase();
 
@@ -125,7 +145,7 @@ const signIn = async () => {
   });
 
   if (error) {
-    alert(error.message);
+    console.error("REFETCH ERROR:", error);
     return;
   }
 
@@ -153,6 +173,8 @@ const signUp = async () => {
   alert("Акаунт створено");
   setShowAuth(false);
 };
+
+if (pageLoading) return <div>Loading...</div>;
 
 const signOut = async () => {
   await supabase.auth.signOut();

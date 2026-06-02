@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -16,11 +22,18 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // =========================
+  // PROFILE LOADER
+  // =========================
   const loadProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -36,65 +49,90 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(data);
   };
 
+  // =========================
+  // INIT AUTH (ONE SOURCE OF TRUTH)
+  // =========================
   useEffect(() => {
-    let mounted = true;
+    let alive = true;
 
     const init = async () => {
       try {
         const {
-          data: { session },
+          data: { user },
           error,
-        } = await supabase.auth.getSession();
+        } = await supabase.auth.getUser();
 
         if (error) {
-          console.error("Session error:", error);
+          console.error("Auth init error:", error);
         }
 
-        const currentUser = session?.user ?? null;
+        if (!alive) return;
 
-        if (!mounted) return;
+        setUser(user ?? null);
 
-        setUser(currentUser);
-
-        if (currentUser) {
-          await loadProfile(currentUser.id);
+        if (user) {
+          await loadProfile(user.id);
+        } else {
+          setProfile(null);
         }
-      } catch (e) {
-        console.error("Auth init error:", e);
       } finally {
-        if (mounted) setLoading(false);
+        if (alive) setLoading(false);
       }
     };
 
     init();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("AUTH EVENT:", event);
-
-      const currentUser = session?.user ?? null;
-
-      setUser(currentUser);
-
-      if (currentUser) {
-        await loadProfile(currentUser.id);
-      } else {
-        setProfile(null);
-      }
-    });
-
     return () => {
-      mounted = false;
-      subscription.unsubscribe();
+      alive = false;
     };
   }, []);
 
+  // =========================
+  // AUTH LISTENER (SAFE VERSION)
+  // =========================
+  useEffect(() => {
+    const { data: subscription } =
+      supabase.auth.onAuthStateChange((event) => {
+        // НЕ доверяем session из event → он может быть временно null
+
+        supabase.auth.getUser().then(({ data, error }) => {
+          if (error) {
+            console.error("Auth event error:", error);
+            return;
+          }
+
+          const currentUser = data.user ?? null;
+
+          setUser(currentUser);
+
+          if (currentUser) {
+            loadProfile(currentUser.id);
+          } else {
+            setProfile(null);
+          }
+        });
+      });
+
+    return () => {
+      subscription.subscription.unsubscribe();
+    };
+  }, []);
+
+  // =========================
+  // CONTEXT VALUE
+  // =========================
   return (
-    <AuthContext.Provider value={{ user, profile, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () =>
+  useContext(AuthContext);
